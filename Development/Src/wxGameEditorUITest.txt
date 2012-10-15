@@ -1,1 +1,0 @@
-./Debug/wxGameEditorUITest_main.o ./Debug/wxGameEditorUITest_gui.o ./Debug/BaseControl_PropertywxConnector.o ./Debug/BaseControl_DlgPropertyEditors.o  
