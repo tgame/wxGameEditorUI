@@ -15,6 +15,7 @@
 #include <wx/propgrid/propgrid.h>
 #include <wx/propgrid/advprops.h>
 #include "../BaseControl/BaseControl.h"
+#include "PropTest.h"
 
 // initialize the application
 IMPLEMENT_APP(MainApp);
@@ -60,6 +61,9 @@ MainFrame::MainFrame(wxWindow *parent) : MainFrameBase( parent )
 	m_auiManage.AddPane(m_propGrid,wxLEFT,"MainFramePane");
 	//m_auiManage.AddPane(m_panel1,wxCENTER,"Draw");
 	m_auiManage.Update();
+	
+	TestPropertyProvider* prop = new TestPropertyProvider;
+	conn->ShowPropertyProvider(prop);
 }
 
 MainFrame::~MainFrame()

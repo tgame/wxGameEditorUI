@@ -12,6 +12,7 @@
     <File Name="wxGameEditorUITest/main.cpp"/>
     <File Name="wxGameEditorUITest/main.h"/>
     <File Name="wxGameEditorUITest/gui.cpp"/>
+    <File Name="wxGameEditorUITest/PropTest.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include"/>
   <VirtualDirectory Name="resources">
@@ -29,6 +30,8 @@
     <VirtualDirectory Name="Resource">
       <File Name="BaseControl/DlgPropertyEditors.fbp"/>
     </VirtualDirectory>
+    <File Name="BaseControl/PropertyHelperFunc.h"/>
+    <File Name="BaseControl/PropertyHelperFunc.cpp"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
