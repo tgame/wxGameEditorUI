@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="BaseControl">
+      <UniqueIdentifier>{e8d337bd-404f-4a98-a7f0-651a96aa4dd3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="wxGameEditorUITest">
+      <UniqueIdentifier>{90c9e84f-f988-4336-a279-7cc3a6cbac56}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="BaseControl\DlgPropertyEditors.fbp">
+      <Filter>BaseControl</Filter>
+    </None>
+    <None Include="wxGameEditorUITest\gui.fbp">
+      <Filter>wxGameEditorUITest</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BaseControl\DlgPropertyEditors.h">
+      <Filter>BaseControl</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseControl\IGuiPropertyDescriptor.h">
+      <Filter>BaseControl</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseControl\IGuiPropertyProvider.h">
+      <Filter>BaseControl</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseControl\PropertyHelperFunc.h">
+      <Filter>BaseControl</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseControl\PropertywxConnector.h">
+      <Filter>BaseControl</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseControl\stdafx.h">
+      <Filter>BaseControl</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseControl\BaseControl.h">
+      <Filter>BaseControl</Filter>
+    </ClInclude>
+    <ClInclude Include="wxGameEditorUITest\main.h">
+      <Filter>wxGameEditorUITest</Filter>
+    </ClInclude>
+    <ClInclude Include="wxGameEditorUITest\PropTest.h">
+      <Filter>wxGameEditorUITest</Filter>
+    </ClInclude>
+    <ClInclude Include="wxGameEditorUITest\gui.h">
+      <Filter>wxGameEditorUITest</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseControl\DlgPropertyEditors_Gui.h">
+      <Filter>BaseControl</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="BaseControl\PropertyHelperFunc.cpp">
+      <Filter>BaseControl</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseControl\PropertywxConnector.cpp">
+      <Filter>BaseControl</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseControl\DlgPropertyEditors.cpp">
+      <Filter>BaseControl</Filter>
+    </ClCompile>
+    <ClCompile Include="wxGameEditorUITest\main.cpp">
+      <Filter>wxGameEditorUITest</Filter>
+    </ClCompile>
+    <ClCompile Include="wxGameEditorUITest\gui.cpp">
+      <Filter>wxGameEditorUITest</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseControl\DlgPropertyEditors_Gui.cpp">
+      <Filter>BaseControl</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

@@ -39,11 +39,12 @@ bool MainApp::OnInit()
 
 MainFrame::MainFrame(wxWindow *parent) : MainFrameBase( parent )
 {
+	wxSize s(600,600);
 	wxPropertyGrid* m_propGrid = new wxPropertyGrid(
         this, // parent
         -1, // id
         wxDefaultPosition, // position
-        wxDefaultSize, // size
+        s,//wxDefaultSize, // size
         // Some specific window styles - for all additional styles,
         // see Modules->PropertyGrid Window Styles
         wxPG_AUTO_SORT | // Automatic sorting after items added

@@ -61,6 +61,10 @@ public:
 		// builtin-in property editor identifiers: Choice, ComboBox,
 		// TextCtrlAndButton, ChoiceAndButton, CheckBox, SpinCtrl,
 		// DatePickerCtrl.
+		return wxPGEditor_ComboBox;
+		return wxPGEditor_ChoiceAndButton;
+		return wxPGEditor_TextCtrlAndButton;
+		return wxPGEditor_Choice;
 		return wxPGEditor_TextCtrl;
 	}
 	virtual void OnSetValue ();
@@ -95,13 +99,32 @@ public:
     //virtual int GetChoiceSelection() const;
 };
 
-class DlgPropertyEditors_Color
+class DlgPropertyEditors_Base
+	:public wxPGChoiceEditor
+{
+public:
+	virtual void UpdateControl( wxPGProperty* property,
+		wxWindow* ctrl ) const;
+	virtual bool OnEvent( wxPropertyGrid* propgrid,
+		wxPGProperty* property,
+		wxWindow* primaryCtrl,
+		wxEvent& event ) const;
+	virtual bool GetValueFromControl( wxVariant& variant,
+		wxPGProperty* property,
+		wxWindow* ctrl ) const;
+};
+
+class DlgPropertyEditors_FloatSlider
 	:public wxPGEditor
 {
 public:
-	DlgPropertyEditors_Color(void);
+	DlgPropertyEditors_FloatSlider(bool isColor);
     virtual wxString GetName() const{
-		return wxString("ColorSlider");
+		if (m_isColor)
+		{
+			return wxString("ColorSlider");
+		}
+		return wxString("FloatSlider");
 	}
     virtual wxPGWindowList CreateControls(wxPropertyGrid* propgrid,
                                           wxPGProperty* property,
@@ -116,8 +139,8 @@ public:
     virtual bool GetValueFromControl( wxVariant& variant,
                                       wxPGProperty* property,
                                       wxWindow* ctrl ) const;
-    virtual void SetValueToUnspecified( wxPGProperty* property,
-                                        wxWindow* ctrl ) const;
+	/*virtual void SetValueToUnspecified( wxPGProperty* property,
+	wxWindow* ctrl ) const;*/
 
     virtual void DrawValue( wxDC& dc,
                             const wxRect& rect,
@@ -125,20 +148,11 @@ public:
                             const wxString& text ) const;
     //virtual wxPGCellRenderer* GetCellRenderer() const;
 
-    virtual void SetControlIntValue( wxPGProperty* property,
-                                     wxWindow* ctrl,
-                                     int value ) const;
+	/*virtual void SetControlIntValue( wxPGProperty* property,
+	wxWindow* ctrl,
+	int value ) const;*/
 protected:
-};
-
-class DlgPropertyEditors_FloatSlider
-	:public DlgPropertyEditors_Color
-{
-public:
-    virtual wxString GetName() const{
-		return wxString("FloatSlider");
-	}
-	
+	bool	m_isColor;
 };
 
 

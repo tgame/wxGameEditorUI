@@ -1,18 +1,14 @@
 #include "stdafx.h"
 #include "DlgPropertyEditors.h"
 #include "PropertyHelperFunc.h"
-
+#include "DlgPropertyEditors_Gui.h"
 #include <wx/propgrid/propgrid.h>
 
 
 wxIMPLEMENT_CLASS(MyPGProperty,wxPGProperty);
 bool MyPGProperty::StringToValue( wxVariant& variant, const wxString& text, int argFlags )const
 {
-	// TODO: Adapt string to property value.
 	variant=text;
-	//std::string s;
-	//s.assign(text.c_str(),text.size());
-	//m_desc->SetValue(s);
 	return true;
 }
 
@@ -20,25 +16,115 @@ void MyPGProperty::OnSetValue ()
 {
 	wxString s=m_value;
 	std::string sv;
-	sv.assign(s.c_str(),s.size());
+	wxWX2MBbuf buf = s.mbc_str();
+	//s.mbc_str().length()
+	sv.assign(buf.data(),buf.length());
 	m_desc->SetValue(sv);
 }
 
 class DlgPropertyEditors_Color_Pane
-	:public wxPanel
+	:public Dlg_Color_Title
 {
 public:
 	DECLARE_DYNAMIC_CLASS(DlgPropertyEditors_Color_Pane);
+	DlgPropertyEditors_Color_Pane(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL )
+		:Dlg_Color_Title(parent,id,pos,size,style)
+	{
+
+	}
+	void ResizeTitle(const wxSize& size)
+	{
+		m_colorTitle->SetSize(size);
+	}
+	void SetDisplayValue(std::vector<ColorSliderParam>& infoSlider)
+	{
+		int c[3]={0,0,0};
+		wxString text;
+		size_t sliderCount = infoSlider.size();
+		for(int i=0;i<sliderCount&&i<m_slider.size();i++)
+		{
+			ColorSliderParam& info = infoSlider[i];
+			wxSlider* s = m_slider[i];
+			double sPercent = (info.m_value-info.m_minValue)/(info.m_maxValue-info.m_minValue);
+			if (i<3)
+			{
+				c[i]=sPercent*255;
+			}
+			int pos = sPercent*1000.0;
+			s->SetValue(pos);
+			if (i+1==sliderCount)
+			{
+				text += wxString::Format("%g",info.m_value);
+			}
+			else{
+				text += wxString::Format("%g,",info.m_value);
+			}
+		}
+		m_colorTitle->SetLabel(text);
+		wxColour bgColor;
+		bgColor.Set(c[0],c[1],c[2]);
+		m_colorTitle->SetBackgroundColour(bgColor);
+	}
+	void GetDisplayValue(std::vector<ColorSliderParam>& infoSlider)
+	{
+		size_t sliderCount = infoSlider.size();
+		for(int i=0;i<sliderCount&&i<m_slider.size();i++)
+		{
+			ColorSliderParam& info = infoSlider[i];
+			wxSlider* s = m_slider[i];
+			int pos = s->GetValue();
+			double percent = pos/1000.0;
+			double v = percent*(info.m_maxValue-info.m_minValue)+info.m_minValue;
+			info.m_value=v;
+		}
+	}
+	virtual void OnTextAccept( wxCommandEvent& event ) 
+	{
+		event.Skip(); 
+	}
 	//wxCLASSINFO
+	std::vector<ColorSliderParam>	m_sliderInfo;
 	std::vector<wxSlider*>	m_slider;
 };
 wxIMPLEMENT_CLASS(DlgPropertyEditors_Color_Pane,wxPanel);
 
-DlgPropertyEditors_Color::DlgPropertyEditors_Color(void)
+
+void DlgPropertyEditors_Base::UpdateControl( wxPGProperty* property,
+	wxWindow* ctrl ) const
+{
+	if (ctrl->IsKindOf(wxCLASSINFO(wxComboBox)))
+	{
+		wxPGChoiceEditor::UpdateControl(property,ctrl);
+	}
+}
+bool DlgPropertyEditors_Base::OnEvent( wxPropertyGrid* propgrid,
+	wxPGProperty* property,
+	wxWindow* primaryCtrl,
+	wxEvent& event ) const
+{
+	if (primaryCtrl->IsKindOf(wxCLASSINFO(wxComboBox)))
+	{
+		return wxPGChoiceEditor::OnEvent(propgrid,property,primaryCtrl,event);
+	}
+	return false;
+}
+bool DlgPropertyEditors_Base::GetValueFromControl( wxVariant& variant,
+	wxPGProperty* property,
+	wxWindow* ctrl ) const
+{
+	if (ctrl->IsKindOf(wxCLASSINFO(wxComboBox)))
+	{
+		return wxPGChoiceEditor::GetValueFromControl(variant,property,ctrl);
+	}
+	return false;
+}
+
+DlgPropertyEditors_FloatSlider::DlgPropertyEditors_FloatSlider(bool isColor)
+	:m_isColor(isColor)
 {
 }
 
-wxPGWindowList DlgPropertyEditors_Color::CreateControls(wxPropertyGrid* propgrid,
+wxPGWindowList DlgPropertyEditors_FloatSlider::CreateControls(wxPropertyGrid* propgrid,
 							  wxPGProperty* property,
 							  const wxPoint& pos,
 							  const wxSize& size) const
@@ -76,16 +162,28 @@ wxPGWindowList DlgPropertyEditors_Color::CreateControls(wxPropertyGrid* propgrid
 	//get how many slider and slider info
 	std::vector<ColorSliderParam> infoSlider;
 	std::string v_in(text.c_str());
-	PropertyHelperFunc::StringToFloatArray(infoSlider,v_in);
+	if (m_isColor)
+	{
+		PropertyHelperFunc::StringToColor(infoSlider,v_in);
+	}
+	else
+	{
+		PropertyHelperFunc::StringToFloatArray(infoSlider,v_in);
+	}
 	size_t sliderCount = infoSlider.size();
-	wxSize dlgSize(size.x,size.y*sliderCount);
-	wxPoint dlgPos(pos.x,pos.y+size.y);
-	
-	DlgPropertyEditors_Color_Pane* dlg = new DlgPropertyEditors_Color_Pane;
-	dlg->Create(propgrid->GetPanel(),wxPG_SUBID2,dlgPos,dlgSize);
+	wxSize dlgSize(size.x,size.y*sliderCount+size.y+8);
+	wxPoint dlgPos(pos.x,pos.y);
+	wxWindow* choiceWnd = 0;
+	if (property->GetChoices().GetCount() > 1)
+	{
+		//wxPGChoiceEditor::CreateControlsBase(propgrid,property,pos,size,0);
+		//dlgPos.y+=size.y;
+	}
+	DlgPropertyEditors_Color_Pane* dlg = new DlgPropertyEditors_Color_Pane(propgrid->GetPanel(),wxPG_SUBID2,dlgPos,dlgSize);
+	dlg->ResizeTitle(size);
 	for(int i=0;i<sliderCount;i++)
 	{
-		wxPoint sliderPos(0,i*size.y);
+		wxPoint sliderPos(0,i*size.y+size.y);
 		wxSlider *ctrl = new wxSlider();
 		#ifdef __WXMSW__
 		//ctrl->Hide();
@@ -93,45 +191,63 @@ wxPGWindowList DlgPropertyEditors_Color::CreateControls(wxPropertyGrid* propgrid
 		ColorSliderParam& info = infoSlider[i];
 		double sPercent = (info.m_value-info.m_minValue)/(info.m_maxValue-info.m_minValue);
 		ctrl->Create(dlg,wxID_ANY
-			,sPercent*1024.0,0,1024,
+			,sPercent*1000.0,0,1000.0,
 			sliderPos,size,wxSL_HORIZONTAL );
 		dlg->m_slider.push_back(ctrl);
+		dlg->bMainSizer->Add( ctrl, 0, wxALL, 0 );
+		//dlg->bMainSizer->Add(ctrl,)
 	}
-
-	return wxPGWindowList(dlg);
+	dlg->bMainSizer->Layout();
+	dlg->SetDisplayValue(infoSlider);
+	std::vector<ColorSliderParam> infoSlider2=infoSlider;
+	dlg->GetDisplayValue(infoSlider2);
+	
+	return wxPGWindowList(dlg,choiceWnd);
 
 }
-void DlgPropertyEditors_Color::UpdateControl( wxPGProperty* property,
+void DlgPropertyEditors_FloatSlider::UpdateControl( wxPGProperty* property,
 					wxWindow* ctrl ) const
 {
+	//DlgPropertyEditors_Base::UpdateControl(property,ctrl);
 	wxString text;	
 	int flags = property->HasFlag(wxPG_PROP_READONLY) ? 0 : wxPG_EDITABLE_VALUE;
 	text = property->GetValueString(flags);
 	//get how many slider and slider info
 	std::string v_in(text.c_str());
 	std::vector<ColorSliderParam> infoSlider;
-	PropertyHelperFunc::StringToFloatArray(infoSlider,v_in);
+	if (m_isColor)
+	{
+		PropertyHelperFunc::StringToColor(infoSlider,v_in);
+	}
+	else
+	{
+		PropertyHelperFunc::StringToFloatArray(infoSlider,v_in);
+	}
 	if ( ctrl->IsKindOf(wxCLASSINFO(DlgPropertyEditors_Color_Pane)))
 	{
 		DlgPropertyEditors_Color_Pane* dlg = (DlgPropertyEditors_Color_Pane*)ctrl;
-		size_t sliderCount = infoSlider.size();
-		for(int i=0;i<sliderCount&&i<dlg->m_slider.size();i++)
-		{
-			ColorSliderParam& info = infoSlider[i];
-			wxSlider* s = dlg->m_slider[i];
-			double sPercent = (info.m_value-info.m_minValue)/(info.m_maxValue-info.m_minValue);
-			s->SetValue(sPercent*1024.0);
-		}
+		dlg->SetDisplayValue(infoSlider);
+		std::vector<ColorSliderParam> infoSlider2=infoSlider;
+		dlg->GetDisplayValue(infoSlider2);
+		return;
 	}
 }
-bool DlgPropertyEditors_Color::OnEvent( wxPropertyGrid* propgrid,
+bool DlgPropertyEditors_FloatSlider::OnEvent( wxPropertyGrid* propgrid,
 			  wxPGProperty* property,
 			  wxWindow* primaryCtrl,
 			  wxEvent& event ) const
 {
 	//wxPGEditor::OnEvent(propgrid,property,primaryCtrl,event);
 	//wxEVT_SCROLL_THUMBTRACK
-	if(event.GetEventType() == wxEVT_SCROLL_CHANGED)
+
+	/*bool ret = DlgPropertyEditors_Base::OnEvent(propgrid,property,primaryCtrl,event);
+	if (ret)
+	{
+		return true;
+	}*/
+	if(event.GetEventType() == wxEVT_SCROLL_CHANGED
+		||event.GetEventType() == wxEVT_SCROLL_THUMBTRACK
+		||wxEVT_COMMAND_TEXT_ENTER==event.GetEventType())
 	{
 		// Update the value   
 		event.Skip();
@@ -140,10 +256,14 @@ bool DlgPropertyEditors_Color::OnEvent( wxPropertyGrid* propgrid,
 	}
 	return false;
 }
-bool DlgPropertyEditors_Color::GetValueFromControl( wxVariant& variant,
+bool DlgPropertyEditors_FloatSlider::GetValueFromControl( wxVariant& variant,
 						  wxPGProperty* property,
 						  wxWindow* ctrl ) const
 {
+	/*if (DlgPropertyEditors_Base::GetValueFromControl(variant,property,ctrl))
+	{
+	return true;
+	}*/
 	if (!ctrl->IsKindOf(wxCLASSINFO(DlgPropertyEditors_Color_Pane)))
 	{
 		return false;
@@ -155,71 +275,73 @@ bool DlgPropertyEditors_Color::GetValueFromControl( wxVariant& variant,
 	//get how many slider and slider info
 	std::string v_in(text.c_str());
 	std::vector<ColorSliderParam> infoSlider;
-	PropertyHelperFunc::StringToFloatArray(infoSlider,v_in);
-	size_t sliderCount = infoSlider.size();
-	for(int i=0;i<sliderCount&&i<dlg->m_slider.size();i++)
+	if (m_isColor)
 	{
-		ColorSliderParam& info = infoSlider[i];
-		wxSlider* s = dlg->m_slider[i];
-		double percent = s->GetValue()/1024.0;
-		double v = percent*(info.m_maxValue-info.m_minValue)+info.m_minValue;
-		info.m_value=v;
+		PropertyHelperFunc::StringToColor(infoSlider,v_in);
 	}
+	else
+	{
+		PropertyHelperFunc::StringToFloatArray(infoSlider,v_in);
+	}
+	//PropertyHelperFunc::StringToFloatArray(infoSlider,v_in);
+	dlg->GetDisplayValue(infoSlider);
 	std::string theValue;
-	PropertyHelperFunc::FloatArrayToString(infoSlider,theValue);
+	if (m_isColor)
+	{
+		PropertyHelperFunc::ColorToString(infoSlider,theValue);
+	}
+	else
+	{
+		PropertyHelperFunc::FloatArrayToString(infoSlider,theValue);
+	}
 	wxClassInfo* theClass = property->GetClassInfo();
 	wxString setValue(theValue.c_str());
-	//wxPG_PROGRAMMATIC_VALUE;
 	variant=setValue;
 	return true;
-	bool ret = property->SetValueFromString(setValue);
-	//property->ActualStringToValue(variant,setValue,wxPG_EDITABLE_VALUE);
-	return false;
 }
-void DlgPropertyEditors_Color::SetValueToUnspecified( wxPGProperty* property,
-							wxWindow* ctrl ) const
-{
-	wxPGEditor::SetValueToUnspecified(property,ctrl);
-}
+//void DlgPropertyEditors_FloatSlider::SetValueToUnspecified( wxPGProperty* property,
+//							wxWindow* ctrl ) const
+//{
+//	wxPGEditor::SetValueToUnspecified(property,ctrl);
+//}
 
-void GetFourColor(const wxString& v,int& v1,int& v2,int& v3,int& v4)
-{
-	unsigned int argb = 0;
-	sscanf(v.c_str(),"%8x",&argb);
-
-	v1 = (argb&0xFF000000)>>24;
-	v2 = (argb&0x00FF0000)>>16;
-	v3 = (argb&0x0000FF00)>>8;
-	v4 = argb&0x000000FF;
-}
-void DlgPropertyEditors_Color::DrawValue( wxDC& dc,
+void DlgPropertyEditors_FloatSlider::DrawValue( wxDC& dc,
 				const wxRect& rect,
 				wxPGProperty* property,
 				const wxString& text ) const
 {
 	wxString s = property->GetValueAsString();
-	int v1=0;
-	int v2=0;
-	int v3=0;
-	int v4=0;
-	GetFourColor(s,v1,v2,v3,v4);
+	std::string v_in(s.c_str());
+	std::vector<ColorSliderParam> infoSlider;
+	if (m_isColor)
+	{
+		PropertyHelperFunc::StringToColor(infoSlider,v_in);
+	}
+	else
+	{
+		PropertyHelperFunc::StringToFloatArray(infoSlider,v_in);
+	}
+	int colorv[4]={0,0,0,0};
+	for (unsigned int i=0;i<infoSlider.size()&&i<4;i++)
+	{
+		ColorSliderParam& info = infoSlider[i];
+		colorv[i%4] = 255.0*(info.m_value-info.m_minValue)/(info.m_maxValue-info.m_minValue);
+	}
 	wxRect myrc=rect;
 	myrc.Deflate(1,1);
 	wxColour color;
-	color.Set(v1,v2,v3,v4);
+	color.Set(colorv[0],colorv[1],colorv[2],colorv[3]);
 	wxBrush brush(color);
 	dc.SetBrush(brush);
 	dc.DrawRectangle(myrc);
-	//dc.draw
-	dc.DrawText(s,wxPoint(myrc.x+myrc.width*0.5,myrc.y));
-	//dc.DrawText(s,myrc.GetLeftTop());
+	dc.DrawText(s,myrc.GetLeftTop());
 }
 
-void DlgPropertyEditors_Color::SetControlIntValue( wxPGProperty* property,
-								 wxWindow* ctrl,
-								 int value ) const
-{
-	
-}
+//void DlgPropertyEditors_FloatSlider::SetControlIntValue( wxPGProperty* property,
+//								 wxWindow* ctrl,
+//								 int value ) const
+//{
+//	
+//}
 	
 	

@@ -96,8 +96,9 @@ namespace _Test
 				prop->m_stdValues=stdValues;
 				m_props.push_back(prop);
 			}
-			const char* v[]={"FF00FF00","FF0000FF","FFFF0000","FF000000","FFFFFFFF"};
-			for (unsigned int i=0;i<1;i++)
+			stdValues.clear();
+			const char* v[]={"FFDA3F67","FF43A64F","FFFF0000","FF000000","FFFFFFFF"};
+			for (unsigned int i=0;i<2;i++)
 			{
 				TestPropertyDesc* prop =new TestPropertyDesc; 
 				prop->m_editorType = "ColorSlider";
@@ -105,10 +106,13 @@ namespace _Test
 				prop->m_category="颜色分组";
 				prop->m_name="颜色属性";
 				m_props.push_back(prop);
+				stdValues.push_back(prop->m_value);
+				prop->m_stdValues=stdValues;
 			}
+			stdValues.clear();
 			const char* vFloatArray[2]={"3.13,0.13={1,20,1},{0.0,1.0,0.01}"
-				,"3.13={1,20,1}"};
-			for (unsigned int i=0;i<1;i++)
+				,"15.13={1,20,1}"};
+			for (unsigned int i=0;i<2;i++)
 			{
 				TestPropertyDesc* prop =new TestPropertyDesc; 
 				prop->m_editorType = "FloatSlider";
@@ -116,6 +120,8 @@ namespace _Test
 				prop->m_category="浮点数分组";
 				prop->m_name="浮点数属性";
 				m_props.push_back(prop);
+				stdValues.push_back(prop->m_value);
+				prop->m_stdValues=stdValues;
 			}
 		}
 		virtual std::vector<IGuiPropertyDescriptor*>& GetDesciptorList(void)
