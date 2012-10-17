@@ -162,7 +162,7 @@ bool DlgPropertyEditors_Color::GetValueFromControl( wxVariant& variant,
 		ColorSliderParam& info = infoSlider[i];
 		wxSlider* s = dlg->m_slider[i];
 		double percent = s->GetValue()/1024.0;
-		double v = percent*(info.m_maxValue-info.m_minValue);
+		double v = percent*(info.m_maxValue-info.m_minValue)+info.m_minValue;
 		info.m_value=v;
 	}
 	std::string theValue;
@@ -170,9 +170,11 @@ bool DlgPropertyEditors_Color::GetValueFromControl( wxVariant& variant,
 	wxClassInfo* theClass = property->GetClassInfo();
 	wxString setValue(theValue.c_str());
 	//wxPG_PROGRAMMATIC_VALUE;
+	variant=setValue;
+	return true;
 	bool ret = property->SetValueFromString(setValue);
 	//property->ActualStringToValue(variant,setValue,wxPG_EDITABLE_VALUE);
-	return true;
+	return false;
 }
 void DlgPropertyEditors_Color::SetValueToUnspecified( wxPGProperty* property,
 							wxWindow* ctrl ) const
