@@ -235,12 +235,12 @@ int DlgCurveEditor::OnCreate(LPCREATESTRUCT lpCreateStruct)
 //#endif
 	if (!m_wnd2Property.Create(this))
 		return -1;
-	if (!m_propertyControl.Create(WS_CHILD|WS_VISIBLE|LBS_OWNERDRAWFIXED|LBS_NOINTEGRALHEIGHT|WS_VSCROLL|LBS_NOTIFY,CRect(0,0,0,0),&m_wnd2Property,5))
+	if (!m_propertyControl.Create(WS_CHILD|WS_VISIBLE|LBS_OWNERDRAWFIXED|LBS_NOINTEGRALHEIGHT|WS_VSCROLL|LBS_NOTIFY,wxRect(0,0,0,0),&m_wnd2Property,5))
 	{
 		return -1;
 	}
 	m_curveWndProvider.CreateTestCurve();
-	m_curveWnd.Create("", CRect(25, 55, 500, 265), &m_wnd2Property, 2001, false);
+	m_curveWnd.Create("", wxRect(25, 55, 500, 265), &m_wnd2Property, 2001, false);
 	m_curveWnd.SetCurveObject(&m_curveWndProvider);
 	m_wnd2Property.SeTypeALing(CGuiSplitter::ALINGHORZ);//ALINGVERT
 	m_wnd2Property.SetSpplitterPos(0.6f);

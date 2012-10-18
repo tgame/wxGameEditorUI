@@ -79,11 +79,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="BaseControl\CurveWndKnotProp.inl" />
     <None Include="BaseControl\DlgPropertyEditors.fbp" />
     <None Include="wxGameEditorUITest\gui.fbp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseControl\BaseControl.h" />
+    <ClInclude Include="BaseControl\CurveWnd.h" />
+    <ClInclude Include="BaseControl\CurveWndProvider.h" />
     <ClInclude Include="BaseControl\DlgPropertyEditors.h" />
     <ClInclude Include="BaseControl\DlgPropertyEditors_Gui.h" />
     <ClInclude Include="BaseControl\IGuiPropertyDescriptor.h" />
@@ -96,6 +99,8 @@
     <ClInclude Include="wxGameEditorUITest\PropTest.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BaseControl\CurveWnd.cpp" />
+    <ClCompile Include="BaseControl\CurveWndProvider.cpp" />
     <ClCompile Include="BaseControl\DlgPropertyEditors.cpp" />
     <ClCompile Include="BaseControl\DlgPropertyEditors_Gui.cpp" />
     <ClCompile Include="BaseControl\PropertyHelperFunc.cpp" />

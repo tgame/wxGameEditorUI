@@ -7,31 +7,25 @@
     <Filter Include="wxGameEditorUITest">
       <UniqueIdentifier>{90c9e84f-f988-4336-a279-7cc3a6cbac56}</UniqueIdentifier>
     </Filter>
+    <Filter Include="BaseControl\Curve">
+      <UniqueIdentifier>{a14c6e54-c51c-4bbc-ad27-1dc25fc49cdb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BaseControl\Property">
+      <UniqueIdentifier>{5363591a-7b08-44e6-b1e2-c447bddb6974}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="BaseControl\DlgPropertyEditors.fbp">
-      <Filter>BaseControl</Filter>
-    </None>
     <None Include="wxGameEditorUITest\gui.fbp">
       <Filter>wxGameEditorUITest</Filter>
     </None>
+    <None Include="BaseControl\DlgPropertyEditors.fbp">
+      <Filter>BaseControl\Property</Filter>
+    </None>
+    <None Include="BaseControl\CurveWndKnotProp.inl">
+      <Filter>BaseControl\Curve</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BaseControl\DlgPropertyEditors.h">
-      <Filter>BaseControl</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseControl\IGuiPropertyDescriptor.h">
-      <Filter>BaseControl</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseControl\IGuiPropertyProvider.h">
-      <Filter>BaseControl</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseControl\PropertyHelperFunc.h">
-      <Filter>BaseControl</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseControl\PropertywxConnector.h">
-      <Filter>BaseControl</Filter>
-    </ClInclude>
     <ClInclude Include="BaseControl\stdafx.h">
       <Filter>BaseControl</Filter>
     </ClInclude>
@@ -47,28 +41,55 @@
     <ClInclude Include="wxGameEditorUITest\gui.h">
       <Filter>wxGameEditorUITest</Filter>
     </ClInclude>
+    <ClInclude Include="BaseControl\PropertywxConnector.h">
+      <Filter>BaseControl\Property</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseControl\DlgPropertyEditors.h">
+      <Filter>BaseControl\Property</Filter>
+    </ClInclude>
     <ClInclude Include="BaseControl\DlgPropertyEditors_Gui.h">
-      <Filter>BaseControl</Filter>
+      <Filter>BaseControl\Property</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseControl\IGuiPropertyDescriptor.h">
+      <Filter>BaseControl\Property</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseControl\IGuiPropertyProvider.h">
+      <Filter>BaseControl\Property</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseControl\PropertyHelperFunc.h">
+      <Filter>BaseControl\Property</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseControl\CurveWnd.h">
+      <Filter>BaseControl\Curve</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseControl\CurveWndProvider.h">
+      <Filter>BaseControl\Curve</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BaseControl\PropertyHelperFunc.cpp">
-      <Filter>BaseControl</Filter>
-    </ClCompile>
-    <ClCompile Include="BaseControl\PropertywxConnector.cpp">
-      <Filter>BaseControl</Filter>
-    </ClCompile>
-    <ClCompile Include="BaseControl\DlgPropertyEditors.cpp">
-      <Filter>BaseControl</Filter>
-    </ClCompile>
     <ClCompile Include="wxGameEditorUITest\main.cpp">
       <Filter>wxGameEditorUITest</Filter>
     </ClCompile>
     <ClCompile Include="wxGameEditorUITest\gui.cpp">
       <Filter>wxGameEditorUITest</Filter>
     </ClCompile>
+    <ClCompile Include="BaseControl\DlgPropertyEditors.cpp">
+      <Filter>BaseControl\Property</Filter>
+    </ClCompile>
     <ClCompile Include="BaseControl\DlgPropertyEditors_Gui.cpp">
-      <Filter>BaseControl</Filter>
+      <Filter>BaseControl\Property</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseControl\PropertyHelperFunc.cpp">
+      <Filter>BaseControl\Property</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseControl\PropertywxConnector.cpp">
+      <Filter>BaseControl\Property</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseControl\CurveWnd.cpp">
+      <Filter>BaseControl\Curve</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseControl\CurveWndProvider.cpp">
+      <Filter>BaseControl\Curve</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

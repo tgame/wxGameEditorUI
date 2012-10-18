@@ -10,7 +10,7 @@
 #ifndef H_2012_3_4_CurveWndProvider
 #define H_2012_3_4_CurveWndProvider
 
-#include "CoreGraphics/EngineMath/GEMath.h"
+//#include "CoreGraphics/EngineMath/GEMath.h"
 
 struct CurveWndKnotPoint
 {
@@ -34,13 +34,27 @@ public :
 	void GetPoint(CurveWndKnotPoint* pt) { pt->x = x; pt->y = y;}	//Extraction
 };
 
+struct CurveWndRect 
+{
+	int left;
+	int right;
+	int top;
+	int bottom;
+	int Width(void){
+		return right-left;
+	}
+	int Height(void){
+		return bottom-top;
+	}
+};
+
 //!
-class _CommoneEditor_Export_ CurveWndProvider
+class CurveWndProvider
 {
 public:
 	CurveWndProvider(void);
 	~CurveWndProvider(void);
-	void ChangeViewport(CRect* rc){
+	void ChangeViewport(CurveWndRect* rc){
 		m_viewportRect = *rc;
 	}
 
@@ -51,7 +65,7 @@ public:
 	virtual void RemoveKnot(size_t idx)=0;
 	virtual void MoveKnot(CurveWndKnotPoint pt, size_t idx)=0;
 protected:
-	CRect	m_viewportRect;
+	CurveWndRect	m_viewportRect;
 	float ViewX2Time(float x){
 		return (float)(x-m_viewportRect.left)/(float)m_viewportRect.Width();
 	}
@@ -65,6 +79,8 @@ protected:
 		return ((1.0f-v)*(float)m_viewportRect.Height()+m_viewportRect.top);
 	}
 };
+
+#ifdef _Curve_TGE_
 
 class FInterpCurveWndProvider
 	:public CurveWndProvider
@@ -121,6 +137,7 @@ public:
 	}
 };
 
+#endif
 
 
 #endif

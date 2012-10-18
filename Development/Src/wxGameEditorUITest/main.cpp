@@ -16,6 +16,7 @@
 #include <wx/propgrid/advprops.h>
 #include "../BaseControl/BaseControl.h"
 #include "PropTest.h"
+#include "../BaseControl/CurveWnd.h"
 
 // initialize the application
 IMPLEMENT_APP(MainApp);
@@ -58,8 +59,12 @@ MainFrame::MainFrame(wxWindow *parent) : MainFrameBase( parent )
     // Add float property (value type is actually double)
     m_propGrid->Append( new wxColourProperty(wxT("ccProperty"), wxPG_LABEL, wxPG_COLOUR(255,255,0)) );
 	
+	CCurveWnd* curveWnd = new CCurveWnd(this);
+
     m_auiManage.SetManagedWindow(this);
 	m_auiManage.AddPane(m_propGrid,wxLEFT,"MainFramePane");
+	m_auiManage.AddPane(curveWnd,wxCENTER,"Curve");
+	//m_auiManage.AddPane(curveWnd,wxRIGHT,"Curve");
 	//m_auiManage.AddPane(m_panel1,wxCENTER,"Draw");
 	m_auiManage.Update();
 	

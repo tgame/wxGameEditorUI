@@ -7,34 +7,6 @@
   </Plugins>
   <Description/>
   <Dependencies/>
-  <VirtualDirectory Name="src">
-    <File Name="wxGameEditorUITest/gui.h"/>
-    <File Name="wxGameEditorUITest/main.cpp"/>
-    <File Name="wxGameEditorUITest/main.h"/>
-    <File Name="wxGameEditorUITest/gui.cpp"/>
-    <File Name="wxGameEditorUITest/PropTest.h"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="include"/>
-  <VirtualDirectory Name="resources">
-    <File Name="wxGameEditorUITest/gui.fbp"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="BaseControl">
-    <File Name="BaseControl/IGuiPropertyDescriptor.h"/>
-    <File Name="BaseControl/IGuiPropertyProvider.h"/>
-    <File Name="BaseControl/PropertywxConnector.h"/>
-    <File Name="BaseControl/PropertywxConnector.cpp"/>
-    <File Name="BaseControl/stdafx.h"/>
-    <File Name="BaseControl/BaseControl.h"/>
-    <File Name="BaseControl/DlgPropertyEditors.h"/>
-    <File Name="BaseControl/DlgPropertyEditors.cpp"/>
-    <VirtualDirectory Name="Resource">
-      <File Name="BaseControl/DlgPropertyEditors.fbp"/>
-    </VirtualDirectory>
-    <File Name="BaseControl/PropertyHelperFunc.h"/>
-    <File Name="BaseControl/PropertyHelperFunc.cpp"/>
-    <File Name="BaseControl/DlgPropertyEditors_Gui.cpp"/>
-    <File Name="BaseControl/DlgPropertyEditors_Gui.h"/>
-  </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -53,7 +25,7 @@
         <Library Value="libwxmsw29ud_propgrid"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./cl/Debug" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -122,4 +94,33 @@
       </Completion>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="BaseControl">
+    <File Name="BaseControl/stdafx.h"/>
+    <File Name="BaseControl/BaseControl.h"/>
+    <VirtualDirectory Name="Curve">
+      <File Name="BaseControl/CurveWnd.h"/>
+      <File Name="BaseControl/CurveWndProvider.h"/>
+      <File Name="BaseControl/CurveWnd.cpp"/>
+      <File Name="BaseControl/CurveWndProvider.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="Property">
+      <File Name="BaseControl/DlgPropertyEditors.h"/>
+      <File Name="BaseControl/DlgPropertyEditors_Gui.h"/>
+      <File Name="BaseControl/IGuiPropertyDescriptor.h"/>
+      <File Name="BaseControl/IGuiPropertyProvider.h"/>
+      <File Name="BaseControl/PropertyHelperFunc.h"/>
+      <File Name="BaseControl/PropertywxConnector.h"/>
+      <File Name="BaseControl/DlgPropertyEditors.cpp"/>
+      <File Name="BaseControl/DlgPropertyEditors_Gui.cpp"/>
+      <File Name="BaseControl/PropertyHelperFunc.cpp"/>
+      <File Name="BaseControl/PropertywxConnector.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
+  <VirtualDirectory Name="wxGameEditorUITest">
+    <File Name="wxGameEditorUITest/main.h"/>
+    <File Name="wxGameEditorUITest/PropTest.h"/>
+    <File Name="wxGameEditorUITest/gui.h"/>
+    <File Name="wxGameEditorUITest/main.cpp"/>
+    <File Name="wxGameEditorUITest/gui.cpp"/>
+  </VirtualDirectory>
 </CodeLite_Project>

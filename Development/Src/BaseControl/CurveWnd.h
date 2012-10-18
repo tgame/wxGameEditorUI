@@ -31,11 +31,11 @@ class CCurveWnd
 {
 public:
 	ICurveWndCallback* m_callback;
-	CCurveWnd(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style );
+	CCurveWnd(wxWindow* parent,wxWindowID winid = wxID_ANY,
+		const wxPoint& pos = wxDefaultPosition,
+		const wxSize& size = wxDefaultSize,
+		long style = wxNO_BORDER|wxFULL_REPAINT_ON_RESIZE|wxWANTS_CHARS);
 	virtual ~CCurveWnd();
-
-	//Create Window
-	bool Create(const char* strName, const RECT &rect, CWnd* pWndParent, unsigned int nID, bool CreateCurveObj = true);
 
 	//Knot functions
 	unsigned int GetActiveKnot();
