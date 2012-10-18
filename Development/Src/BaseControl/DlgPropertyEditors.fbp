@@ -30,7 +30,7 @@
             <property name="aui_managed">0</property>
             <property name="aui_name"></property>
             <property name="best_size"></property>
-            <property name="bg"></property>
+            <property name="bg">wxSYS_COLOUR_ACTIVECAPTION</property>
             <property name="caption"></property>
             <property name="caption_visible">1</property>
             <property name="center_pane">0</property>
@@ -198,7 +198,7 @@
                         <event name="OnSetFocus"></event>
                         <event name="OnSize"></event>
                         <event name="OnText"></event>
-                        <event name="OnTextEnter">OnTextAccept</event>
+                        <event name="OnTextEnter"></event>
                         <event name="OnTextMaxLen"></event>
                         <event name="OnTextURL"></event>
                         <event name="OnUpdateUI"></event>

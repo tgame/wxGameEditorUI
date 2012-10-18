@@ -64,6 +64,7 @@ MainFrame::MainFrame(wxWindow *parent) : MainFrameBase( parent )
 	m_auiManage.Update();
 	
 	TestPropertyProvider* prop = new TestPropertyProvider;
+	prop->CreateSomeChild(prop->m_mayHaveChild);
 	conn->ShowPropertyProvider(prop);
 }
 

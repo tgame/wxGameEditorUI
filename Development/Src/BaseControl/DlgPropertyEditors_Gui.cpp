@@ -20,14 +20,8 @@ Dlg_Color_Title::Dlg_Color_Title( wxWindow* parent, wxWindowID id, const wxPoint
 	
 	this->SetSizer( bMainSizer );
 	this->Layout();
-	
-	// Connect Events
-	m_colorTitle->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Dlg_Color_Title::OnTextAccept ), NULL, this );
 }
 
 Dlg_Color_Title::~Dlg_Color_Title()
 {
-	// Disconnect Events
-	m_colorTitle->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( Dlg_Color_Title::OnTextAccept ), NULL, this );
-	
 }

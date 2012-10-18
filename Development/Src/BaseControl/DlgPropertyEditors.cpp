@@ -4,6 +4,51 @@
 #include "DlgPropertyEditors_Gui.h"
 #include <wx/propgrid/propgrid.h>
 
+struct WrapDlgPropertyEditorsList
+{
+	static const wxPGEditor* GetEditor(IGuiPropertyDescriptor* desc)
+	{		
+	// Determines editor used by property.
+	// You can replace 'TextCtrl' below with any of these
+	// builtin-in property editor identifiers: Choice, ComboBox,
+	// TextCtrlAndButton, ChoiceAndButton, CheckBox, SpinCtrl,
+	// DatePickerCtrl.
+		static DlgPropertyEditors_FloatSlider* colorEditor = new DlgPropertyEditors_FloatSlider(true);
+		static DlgPropertyEditors_FloatSlider* floatEditor = new DlgPropertyEditors_FloatSlider(false);
+		if(desc->GetEditorType()=="ColorSlider")
+		{
+			return colorEditor;
+		}
+		else if (desc->GetEditorType()=="FloatSlider")
+		{
+			return floatEditor;
+		}
+		else if(desc->GetEditorType()=="Checkbox")
+		{
+			return wxPGEditor_CheckBox;
+		}
+		if(desc->GetStandardValuesSupported()
+			&&desc->GetStandardValues())
+		{
+			if(desc->GetStandardValuesExclusive())
+			{
+				return wxPGEditor_Choice;
+			}
+			else
+			{
+				return wxPGEditor_ComboBox;				
+			}
+		}
+		//return wxPGEditor_ChoiceAndButton;
+		return wxPGEditor_TextCtrlAndButton;
+	}
+};
+
+void _wxString2stdstring(std::string& s,const wxString& ws)
+{
+	wxWX2MBbuf buf = ws.mbc_str();
+	s.assign(buf.data(),buf.length());
+}
 
 wxIMPLEMENT_CLASS(MyPGProperty,wxPGProperty);
 bool MyPGProperty::StringToValue( wxVariant& variant, const wxString& text, int argFlags )const
@@ -11,14 +56,58 @@ bool MyPGProperty::StringToValue( wxVariant& variant, const wxString& text, int 
 	variant=text;
 	return true;
 }
+const wxPGEditor* MyPGProperty::DoGetEditorClass() const
+{
+	return WrapDlgPropertyEditorsList::GetEditor(m_desc);
+}
+void MyPGProperty::Bind(IGuiPropertyDescriptor* desc)
+{
+	m_desc=desc;
+	m_name=m_desc->GetDisplayName().c_str();
+	this->SetLabel(m_desc->GetDisplayName().c_str());
+	//DoGetValue();		
+	wxString s;
+	const std::string& v= m_desc->GetValue();
+	s.assign(v.c_str(),v.size());
+	m_value=s;
+	m_choices.Clear();
+	std::vector<std::string>* choiceList=m_desc->GetStandardValues();
+	for(size_t i=0;m_desc->GetStandardValuesSupported()&&choiceList&&i<choiceList->size();i++)
+	{
+		std::string& v = choiceList->at(i);
+		m_choices.Add(v.c_str(),i);
+	}
+	if (!choiceList&&m_desc->GetEditorType()=="Checkbox")
+	{
+		m_choices.Add("true",1);
+		m_choices.Add("false",0);
+	}
+	
+	if(m_desc->IsReadOnly())
+	{
+		
+	}
+}
 
 void MyPGProperty::OnSetValue ()
 {
-	wxString s=m_value;
 	std::string sv;
-	wxWX2MBbuf buf = s.mbc_str();
-	//s.mbc_str().length()
-	sv.assign(buf.data(),buf.length());
+	if (m_value.IsType("bool"))
+	{
+		if (m_value)
+		{
+			sv="true";
+		}
+		else
+		{
+			sv="false";
+		}
+	}
+	else
+	{
+		wxString s=m_value;
+		_wxString2stdstring(sv,s);
+	}
 	m_desc->SetValue(sv);
 }
 
@@ -78,10 +167,6 @@ public:
 			info.m_value=v;
 		}
 	}
-	virtual void OnTextAccept( wxCommandEvent& event ) 
-	{
-		event.Skip(); 
-	}
 	//wxCLASSINFO
 	std::vector<ColorSliderParam>	m_sliderInfo;
 	std::vector<wxSlider*>	m_slider;
@@ -129,31 +214,6 @@ wxPGWindowList DlgPropertyEditors_FloatSlider::CreateControls(wxPropertyGrid* pr
 							  const wxPoint& pos,
 							  const wxSize& size) const
 {
-	/*
-	if(!property->IsKindOf(MyPGProperty::GetClassInfoStatic()))
-	{
-		wxString text;
-		//
-		// If has children, and limited editing is specified, then don't create.
-		if ( (property->GetFlags() & wxPG_PROP_NOEDITOR) &&
-			 property->GetChildCount() )
-			return (wxWindow*) NULL;
-		if ( !property->IsValueUnspecified() )
-		{
-			int flags = property->HasFlag(wxPG_PROP_READONLY) ? 
-				0 : wxPG_EDITABLE_VALUE;
-			text = property->GetValueString(flags);
-		}
-		else
-		{
-			text = propgrid->GetUnspecifiedValueText();
-		}
-		int flags = 0;
-		wxWindow* wnd = propgrid->GenerateEditorTextCtrl(pos,size,text,(wxWindow*)NULL,flags,
-														 property->GetMaxLength());
-		return wnd;
-	}
-	 * */
 	wxString text;	
 	int flags = property->HasFlag(wxPG_PROP_READONLY) ? 
 		0 : wxPG_EDITABLE_VALUE;
@@ -193,6 +253,10 @@ wxPGWindowList DlgPropertyEditors_FloatSlider::CreateControls(wxPropertyGrid* pr
 		ctrl->Create(dlg,wxID_ANY
 			,sPercent*1000.0,0,1000.0,
 			sliderPos,size,wxSL_HORIZONTAL );
+		wxColour c;
+		c.Set(127,127,127);
+		ctrl->SetBackgroundColour(c);
+		ctrl->Refresh();
 		dlg->m_slider.push_back(ctrl);
 		dlg->bMainSizer->Add( ctrl, 0, wxALL, 0 );
 		//dlg->bMainSizer->Add(ctrl,)
@@ -208,12 +272,12 @@ wxPGWindowList DlgPropertyEditors_FloatSlider::CreateControls(wxPropertyGrid* pr
 void DlgPropertyEditors_FloatSlider::UpdateControl( wxPGProperty* property,
 					wxWindow* ctrl ) const
 {
-	//DlgPropertyEditors_Base::UpdateControl(property,ctrl);
-	wxString text;	
+	wxString text;
 	int flags = property->HasFlag(wxPG_PROP_READONLY) ? 0 : wxPG_EDITABLE_VALUE;
 	text = property->GetValueString(flags);
 	//get how many slider and slider info
-	std::string v_in(text.c_str());
+	std::string v_in;
+	_wxString2stdstring(v_in,text);
 	std::vector<ColorSliderParam> infoSlider;
 	if (m_isColor)
 	{
@@ -237,9 +301,32 @@ bool DlgPropertyEditors_FloatSlider::OnEvent( wxPropertyGrid* propgrid,
 			  wxWindow* primaryCtrl,
 			  wxEvent& event ) const
 {
-	//wxPGEditor::OnEvent(propgrid,property,primaryCtrl,event);
-	//wxEVT_SCROLL_THUMBTRACK
-
+	if(!primaryCtrl->IsKindOf(wxCLASSINFO(DlgPropertyEditors_Color_Pane)))
+	{
+		return false;
+	}
+	DlgPropertyEditors_Color_Pane* dlg=(DlgPropertyEditors_Color_Pane*)primaryCtrl;
+	if(wxEVT_COMMAND_TEXT_ENTER==event.GetEventType())
+	{
+		event.Skip();
+		wxString text;
+		text = property->GetValueString(property->HasFlag(wxPG_PROP_READONLY) ? 0 : wxPG_EDITABLE_VALUE);
+		//get how many slider and slider info
+		std::string v_in;
+		_wxString2stdstring(v_in,text);
+		std::vector<ColorSliderParam> infoSlider;
+		if (m_isColor)
+		{
+			PropertyHelperFunc::StringToColor(infoSlider,v_in);
+		}
+		else
+		{
+			PropertyHelperFunc::StringToFloatArray(infoSlider,v_in);
+		}
+		dlg->SetDisplayValue(infoSlider);
+		propgrid->EditorsValueWasModified();
+		return true;
+	}
 	/*bool ret = DlgPropertyEditors_Base::OnEvent(propgrid,property,primaryCtrl,event);
 	if (ret)
 	{

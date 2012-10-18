@@ -32,6 +32,8 @@
     </VirtualDirectory>
     <File Name="BaseControl/PropertyHelperFunc.h"/>
     <File Name="BaseControl/PropertyHelperFunc.cpp"/>
+    <File Name="BaseControl/DlgPropertyEditors_Gui.cpp"/>
+    <File Name="BaseControl/DlgPropertyEditors_Gui.h"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

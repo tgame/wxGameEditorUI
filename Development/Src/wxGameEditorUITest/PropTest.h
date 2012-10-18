@@ -13,6 +13,7 @@ namespace _Test
 		TestPropertyDesc(void){
 			m_value="我是字符串";
 			m_editorType="Editbox";
+			m_child=0;
 		}
 		//!获取描述
 		virtual const std::string& GetDesc(void){
@@ -71,7 +72,8 @@ namespace _Test
 		}
 		//!获取子属性提供器
 		virtual IGuiPropertyProvider* GetChildrenPropertyProvider(void){ 
-			return 0;}
+			return m_child;}
+		IGuiPropertyProvider* m_child;
 	protected:
 	private:
 	};
@@ -81,13 +83,17 @@ namespace _Test
 	{
 		std::vector<IGuiPropertyDescriptor*>	m_props;
 	public:
+		TestPropertyDesc*	m_mayHaveChild;
 		TestPropertyProvider(void)
 		{
+			char nameBuf[128];
 			std::vector<std::string> stdValues;
 			for (unsigned int i=0;i<3;i++)
 			{
 				TestPropertyDesc* prop =new TestPropertyDesc;
-				prop->m_name="文本属性";
+				m_mayHaveChild=prop;
+				sprintf(nameBuf,"文本属性_%d",i);
+				prop->m_name=nameBuf;
 				prop->m_category="文本分组";
 				char buf[128];
 				sprintf(buf,"SSS文本Value_%d",i);
@@ -104,7 +110,9 @@ namespace _Test
 				prop->m_editorType = "ColorSlider";
 				prop->m_value=v[i];
 				prop->m_category="颜色分组";
-				prop->m_name="颜色属性";
+				
+				sprintf(nameBuf,"颜色属性_%d",i);
+				prop->m_name=nameBuf;
 				m_props.push_back(prop);
 				stdValues.push_back(prop->m_value);
 				prop->m_stdValues=stdValues;
@@ -118,11 +126,24 @@ namespace _Test
 				prop->m_editorType = "FloatSlider";
 				prop->m_value=vFloatArray[i];
 				prop->m_category="浮点数分组";
-				prop->m_name="浮点数属性";
+				
+				sprintf(nameBuf,"浮点数属性_%d",i);
+				prop->m_name=nameBuf;
 				m_props.push_back(prop);
 				stdValues.push_back(prop->m_value);
 				prop->m_stdValues=stdValues;
 			}
+			TestPropertyDesc* prop =new TestPropertyDesc; 
+			prop->m_editorType = "Checkbox";
+			prop->m_value="true";
+			prop->m_category="Bool分组";
+			sprintf(nameBuf,"Bool分组_%d",1);
+			prop->m_name=nameBuf;
+			m_props.push_back(prop);
+		}
+		void CreateSomeChild(TestPropertyDesc* desc)
+		{
+			desc->m_child = new TestPropertyProvider();
 		}
 		virtual std::vector<IGuiPropertyDescriptor*>& GetDesciptorList(void)
 		{

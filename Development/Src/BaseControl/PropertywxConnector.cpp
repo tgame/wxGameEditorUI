@@ -24,8 +24,8 @@ void PropertywxConnector::AssignwxControl(wxPropertyGrid* grid)
 {
 	m_wxGrid=grid;
 	//wxPropertyGrid::()
-	grid->RegisterEditorClass(new DlgPropertyEditors_FloatSlider(true));
-	grid->RegisterEditorClass(new DlgPropertyEditors_FloatSlider(false));
+	//grid->RegisterEditorClass(new DlgPropertyEditors_FloatSlider(true));
+	//grid->RegisterEditorClass(new DlgPropertyEditors_FloatSlider(false));
 }
 void PropertywxConnector::Update(void)
 {
@@ -35,21 +35,27 @@ void PropertywxConnector::Update(void)
 	{
 		return;
 	}
-	static DlgPropertyEditors_FloatSlider* colorEditor = new DlgPropertyEditors_FloatSlider(true);
-	static DlgPropertyEditors_FloatSlider* floatEditor = new DlgPropertyEditors_FloatSlider(false);
-	for(unsigned int i=0;i<m_currentProvider->GetDesciptorList().size();i++)
+	AddChildPropertyProvider(0,m_currentProvider);
+}
+void PropertywxConnector::AddChildPropertyProvider(MyPGProperty* parent,IGuiPropertyProvider* provider)
+{
+	for(unsigned int i=0;i<provider->GetDesciptorList().size();i++)
 	{
-		IGuiPropertyDescriptor* desc = m_currentProvider->GetDesciptorList()[i];
+		IGuiPropertyDescriptor* desc = provider->GetDesciptorList()[i];
 		MyPGProperty* prop = new MyPGProperty;
 		prop->Bind(desc);
-		wxPGProperty* colProp = m_wxGrid->Append(prop);
-		if(desc->GetEditorType()=="ColorSlider")
-	   {
-			m_wxGrid->SetPropertyEditor(colProp,colorEditor);
-	   }
-		else if (desc->GetEditorType()=="FloatSlider")
+		//if(desc)
+		if(parent)
 		{
-			m_wxGrid->SetPropertyEditor(colProp,floatEditor);
+			parent->AppendChild(prop);
+		}
+		else
+		{			
+			wxPGProperty* colProp = m_wxGrid->Append(prop);
+		}
+		if(desc->GetChildrenPropertyProvider())
+		{
+			AddChildPropertyProvider(prop,desc->GetChildrenPropertyProvider());
 		}
 	}
 }

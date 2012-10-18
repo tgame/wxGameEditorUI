@@ -2,9 +2,6 @@
 #ifndef _H_20121016_DlgPropertyEditors
 #define _H_20121016_DlgPropertyEditors
 
-#include <wx/wx.h>
-#include <wx/propgrid/propgrid.h>
-#include <wx/propgrid/editors.h>
 #include "IGuiPropertyProvider.h"
 #include "IGuiPropertyDescriptor.h"
 
@@ -26,23 +23,7 @@ public:
 	virtual ~MyPGProperty() { 
 		}
 	
-	void Bind(IGuiPropertyDescriptor* desc)
-	{
-		m_desc=desc;
-		this->SetLabel(m_desc->GetDisplayName().c_str());
-		//DoGetValue();		
-		wxString s;
-		const std::string& v= m_desc->GetValue();
-		s.assign(v.c_str(),v.size());
-		m_value=s;
-		m_choices.Clear();
-		std::vector<std::string>* choiceList=m_desc->GetStandardValues();
-		for(size_t i=0;m_desc->GetStandardValuesSupported()&&choiceList&&i<choiceList->size();i++)
-		{
-			std::string& v = choiceList->at(i);
-			m_choices.Add(v.c_str(),i);
-		}
-	}
+	void Bind(IGuiPropertyDescriptor* desc);
     virtual wxVariant DoGetValue() const {
 		if(m_desc)
 		{
@@ -54,19 +35,7 @@ public:
 		}
 		return m_value; }
 
-	const wxPGEditor* DoGetEditorClass() const
-	{
-		// Determines editor used by property.
-		// You can replace 'TextCtrl' below with any of these
-		// builtin-in property editor identifiers: Choice, ComboBox,
-		// TextCtrlAndButton, ChoiceAndButton, CheckBox, SpinCtrl,
-		// DatePickerCtrl.
-		return wxPGEditor_ComboBox;
-		return wxPGEditor_ChoiceAndButton;
-		return wxPGEditor_TextCtrlAndButton;
-		return wxPGEditor_Choice;
-		return wxPGEditor_TextCtrl;
-	}
+	const wxPGEditor* DoGetEditorClass() const;
 	virtual void OnSetValue ();
 
 	virtual wxString ValueToString( wxVariant& value,
@@ -82,6 +51,10 @@ public:
                              int number,
                              int argFlags = 0 ) const
 	 {
+		 if (value.IsType("bool"))
+		 {
+			 value=value?"true":"false";
+		 }
 		 std::vector<std::string>* choiceList=m_desc->GetStandardValues();
 		 if(m_desc->GetStandardValuesSupported()&&choiceList&&number<choiceList->size())
 		 {

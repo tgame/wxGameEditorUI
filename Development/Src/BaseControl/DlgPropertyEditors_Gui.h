@@ -32,10 +32,6 @@ class Dlg_Color_Title : public wxPanel
 	
 	protected:
 		wxTextCtrl* m_colorTitle;
-		
-		// Virtual event handlers, overide them in your derived class
-		virtual void OnTextAccept( wxCommandEvent& event ) { event.Skip(); }
-		
 	
 	public:
 		wxBoxSizer* bMainSizer;
